@@ -1,29 +1,32 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Login {
     private Scanner sc;
-    private String func;
+    private int func;
     private User user;
     private ArrayList<User> userlist;
     private int userIdx;
+    private String userName;
 
     Login() {
         this.sc = new Scanner(System.in);
-        this.func = "";
+        this.func = 0;
         this.userlist = new ArrayList<>();
         this.userIdx = -1;
 
         loadData();
         showMain();
+        save();
     }
 
     public void loadData() {
-        File f = new File("data.dat");
+        File f = new File("userdata.dat");
         if (f.exists()) {
             try {
-                BufferedReader br = new BufferedReader(new FileReader("data.dat"));
+                BufferedReader br = new BufferedReader(new FileReader("userdata.dat"));
                 while (true) {
                     String str = br.readLine();
                     if (str == null) break;
@@ -41,22 +44,20 @@ public class Login {
     }
 
     public void showMain() {
-        System.out.println("로그인 (명령어 : help)");
+        System.out.println("===  Login  ===");
+        System.out.println("1. 로그인, 2. 회원가입, 3. 회원탈퇴, 4. 게스트모드");
         while (true) {
-            System.out.print("메뉴 입력 : ");
-            func = sc.nextLine();
-            if (func.equals("exit")) {
-                save();
-                System.out.println("프로그램을 종료합니다.");
+            System.out.print("입력 : ");
+            func = inputNum(sc);
+            if (func == 4) {
+                this.userIdx = -1;
                 return;
-            } else if (func.equals("register")) register();
-            else if (func.equals("login")) {
+            } else if (func == 2) register();
+            else if (func == 1) {
                 if (login()) {
-                    save();
                     return;
                 }
-            } else if (func.equals("help")) showHelp();
-            else if (func.equals("withdraw")) withdraw();
+            } else if (func == 3) withdraw();
         }
     }
 
@@ -84,7 +85,8 @@ public class Login {
             System.out.println("회원정보가 맞지 않습니다.");
             return false;
         } else {
-            System.out.println(userlist.get(userIdx).getName() + "님 환영합니다!");
+            userName = userlist.get(userIdx).getName();
+            System.out.println(userName + "님 환영합니다!");
             return true;
         }
     }
@@ -117,14 +119,6 @@ public class Login {
         return -2;
     }
 
-    public void showHelp() {
-        System.out.println("==========");
-        System.out.println("login : 로그인");
-        System.out.println("register : 회원가입");
-        System.out.println("withdraw : 회원탈퇴");
-        System.out.println("exit : 종료");
-        System.out.println("==========");
-    }
 
     public int getUserIdx() {
         return userIdx;
@@ -136,7 +130,7 @@ public class Login {
 
     public void save() {
         try {
-            PrintWriter pw = new PrintWriter(new FileWriter("data.dat"));
+            PrintWriter pw = new PrintWriter(new FileWriter("userdata.dat"));
             for (User arr : userlist) {
                 pw.println(arr.getId());
                 pw.println(arr.getPassword());
@@ -146,5 +140,28 @@ public class Login {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public int inputNum(Scanner sc) {
+        int input;
+        while (true) {
+            try {
+                input = sc.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("숫자만 입력해주세요.");
+                sc.nextLine();
+                return -1;
+            }
+            sc.nextLine();
+            return input;
+        }
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

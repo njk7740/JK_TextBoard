@@ -13,6 +13,8 @@ public class Post {
     private String time;
     private ArrayList<Integer> greatPeople;
     private ArrayList<Comment> commentlist;
+    private int writterIdx;
+    private String writter;
     Scanner sc;
 
     Post() {
@@ -20,6 +22,8 @@ public class Post {
         great = 0;
         commentlist = new ArrayList<>();
         greatPeople = new ArrayList<>();
+        writterIdx = 0;
+        writter = "";
     }
 
     public void greatUp(int userIdx) {
@@ -135,5 +139,21 @@ public class Post {
 
     public int getCount() {
         return count;
+    }
+
+    public String getWritter() {
+        return writter;
+    }
+
+    public int getWritterIdx() {
+        return writterIdx;
+    }
+
+    public void setWritterIdx(int writterIdx) {
+        this.writterIdx = writterIdx;
+    }
+
+    public void setWritter(String writter) {
+        this.writter = writter;
     }
 }
